@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PullUp Trainer</string>
+    <string name="level">Уровень %1$d</string>
+    <string name="day">День %1$02d</string>
+    <string name="current_day">Текущий день</string>
+    <string name="today">Сегодня</string>
+    <string name="days_count">%1$d дней(дня)</string>
+    <string name="workout_reminder_title">Время тренировки!</string>
+    <string name="workout_reminder_text">Сегодня день вашей тренировки подтягиваний</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_about">О программе</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_sound_enabled">Включить звук</string>
+    <string name="settings_notifications_enabled">Включить уведомления</string>
+    <string name="settings_assistant">Асистент</string>
+    <string name="settings_no_assistant">Нет</string>
+    <string name="settings_test_sound">Тест звука</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_system">Системная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Темная</string>
+    <string name="about_title">О программе</string>
+    <string name="app_version">Версия 1.0.4</string>
+    <string name="release_date">Дата релиза: 23.01.2026</string>
+    <string name="about_developer">Разработчик</string>
+    <string name="developer_name">Karasev Alexander</string>
+    <string name="developer_email">alexander@karasev.ru</string>
+    <string name="developer_website">strongcrm.ru</string>
+    <string name="developer_location">Moscow, Russia</string>
+    <string name="about_description">Приложение для отслеживания прогресса тренировок подтягиваний по уровням с автоматическим расчетом дат и напоминаниями.</string>
+    <string name="about_features">• 3 уровня тренировок\n• Автоматический расчет дат\n• Напоминания о тренировках\n• Отслеживание прогресса\n• Автоматический подсчет подтягиваний через датчики\n• Таймер отдыха между подходами\n• Звуковые сигналы при выполнении повторений\n• Голосовой ассистент для мотивации\n• Экран тренировки с визуальным прогрессом\n• Настройки звука и ассистента</string>
+    <string name="copyright">© 2025 Karasev Alexander. Все права защищены.</string>
+    <string name="start_workout">Начать тренировку</string>
+    <string name="set_workout">Установить тренировку</string>
+    <string name="complete_workout">Отметить выполненной</string>
+    <string name="uncomplete_workout">Отметить невыполненной</string>
+    <string name="workout_start_button">НАЧАТЬ</string>
+    <string name="workout_complete_button">ВЫПОЛНЕНО</string>
+    <string name="workout_cancel_button">ПРЕРВАТЬ</string>
+    <string name="workout_set">Подход %1$d</string>
+    <string name="workout_reps">повторений</string>
+    <string name="workout_single_set">%1$d повторений</string>
+    <string name="workout_rest">Отдых</string>
+    <string name="workout_skip_button">ПРОПУСТИТЬ</string>
+    <string name="workout_completed">Поздравляем, тренировка завершена!</string>
+</resources>
