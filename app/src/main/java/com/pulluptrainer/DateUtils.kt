@@ -5,7 +5,7 @@ import java.util.Calendar
 import java.util.Locale
 
 object DateUtils {
-    private val dateFormat = SimpleDateFormat("d MMM yyyy г.", Locale("ru"))
+    private val dateFormat = SimpleDateFormat("d MMM yyyy г.", Locale.forLanguageTag("ru"))
     
     /**
      * Рассчитывает общий номер дня с учетом всех предыдущих уровней

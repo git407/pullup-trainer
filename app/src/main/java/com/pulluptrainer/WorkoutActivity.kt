@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.ToneGenerator
@@ -578,7 +579,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             isPullupSoundPlaying = true
             pullupMediaPlayer = MediaPlayer().apply {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
-                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setAudioAttributes(AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build())
                 prepare()
                 start()
                 setOnCompletionListener {
@@ -632,7 +636,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             isAssistantSoundPlaying = true
             assistantMediaPlayer = MediaPlayer().apply {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
-                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setAudioAttributes(AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build())
                 prepare()
                 start()
                 setOnCompletionListener {
@@ -674,7 +681,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             isReadySoundPlaying = true
             readyMediaPlayer = MediaPlayer().apply {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
-                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setAudioAttributes(AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build())
                 prepare()
                 start()
                 setOnCompletionListener {
@@ -707,7 +717,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             val assetFileDescriptor: AssetFileDescriptor = assets.openFd("sound/$selectedAssistant/done.mp3")
             val doneMediaPlayer = MediaPlayer().apply {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
-                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setAudioAttributes(AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build())
                 prepare()
                 start()
                 setOnCompletionListener {
@@ -743,7 +756,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             isRecordSoundPlaying = true
             recordMediaPlayer = MediaPlayer().apply {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
-                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setAudioAttributes(AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build())
                 prepare()
                 start()
                 setOnCompletionListener {
@@ -849,10 +865,11 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        cancelWorkout()
         return true
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         cancelWorkout()
     }

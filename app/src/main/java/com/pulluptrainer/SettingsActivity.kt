@@ -2,6 +2,7 @@ package com.pulluptrainer
 
 import android.content.res.AssetFileDescriptor
 import android.content.res.AssetManager
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -264,7 +265,10 @@ class SettingsActivity : AppCompatActivity() {
             val assetFileDescriptor: AssetFileDescriptor = assets.openFd("sound/$assistant/$randomFile")
             testMediaPlayer = MediaPlayer().apply {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
-                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setAudioAttributes(AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build())
                 prepare()
                 start()
             }
@@ -385,10 +389,11 @@ class SettingsActivity : AppCompatActivity() {
     }
     
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        finish()
         return true
     }
     
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // Просто закрываем активность, тема уже применена при выборе
         super.onBackPressed()
