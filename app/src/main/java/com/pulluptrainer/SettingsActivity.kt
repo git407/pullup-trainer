@@ -240,8 +240,10 @@ class SettingsActivity : AppCompatActivity() {
             files?.forEach { file ->
                 // Проверяем, что это звуковой файл (case-insensitive)
                 val lowerFile = file.lowercase()
-                if (lowerFile.endsWith(".mp3") || lowerFile.endsWith(".wav") || 
-                    lowerFile.endsWith(".ogg") || lowerFile.endsWith(".m4a")) {
+                // Фильтруем только мотивационные файлы (motivate*)
+                if ((lowerFile.endsWith(".mp3") || lowerFile.endsWith(".wav") || 
+                    lowerFile.endsWith(".ogg") || lowerFile.endsWith(".m4a")) &&
+                    lowerFile.startsWith("motivate")) {
                     soundFiles.add(file)
                 }
             }
@@ -271,15 +273,17 @@ class SettingsActivity : AppCompatActivity() {
                     // Проверяем, что это директория (ассистент)
                     val subFiles = assetManager.list("$soundDir/$file")
                     if (subFiles != null && subFiles.isNotEmpty()) {
-                        // Проверяем, что в директории есть звуковые файлы
-                        val hasSoundFiles = subFiles.any { soundFile ->
-                            soundFile.endsWith(".mp3", ignoreCase = true) ||
-                            soundFile.endsWith(".wav", ignoreCase = true) ||
-                            soundFile.endsWith(".ogg", ignoreCase = true) ||
-                            soundFile.endsWith(".m4a", ignoreCase = true)
+                        // Проверяем, что в директории есть мотивационные файлы (motivate*)
+                        val hasMotivationalFiles = subFiles.any { soundFile ->
+                            val lowerFile = soundFile.lowercase()
+                            (lowerFile.endsWith(".mp3", ignoreCase = true) ||
+                            lowerFile.endsWith(".wav", ignoreCase = true) ||
+                            lowerFile.endsWith(".ogg", ignoreCase = true) ||
+                            lowerFile.endsWith(".m4a", ignoreCase = true)) &&
+                            lowerFile.startsWith("motivate")
                         }
-                        if (hasSoundFiles) {
-                            // Это директория с звуковыми файлами - добавляем как ассистента
+                        if (hasMotivationalFiles) {
+                            // Это директория с мотивационными файлами - добавляем как ассистента
                             assistants.add(file)
                         }
                     }

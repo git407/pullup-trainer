@@ -55,6 +55,11 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     
     // Медиаплеер для звуков ассистента
     private var assistantMediaPlayer: MediaPlayer? = null
+    private var isAssistantSoundPlaying: Boolean = false
+    
+    // Медиаплеер для звука ready.mp3
+    private var readyMediaPlayer: MediaPlayer? = null
+    private var isReadySoundPlaying: Boolean = false
     
     // Переменные для определения подтягивания
     private var lastY: Float = 0f
@@ -223,8 +228,16 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         completeButton.visibility = View.VISIBLE
         cancelButton.visibility = View.VISIBLE
         
-        // Запускаем датчики для автоматического подсчета
-        startSensorTracking()
+        // Воспроизводим ready.mp3 перед началом первого подхода
+        if (settingsManager.isSoundEnabled()) {
+            playReadySound {
+                // Запускаем датчики для автоматического подсчета после завершения звука
+                startSensorTracking()
+            }
+        } else {
+            // Запускаем датчики для автоматического подсчета
+            startSensorTracking()
+        }
     }
     
     private fun startSensorTracking() {
@@ -251,6 +264,9 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null || currentSetIndex < 0 || currentSetIndex >= sets.size) return
+        
+        // Не учитываем подтягивания, пока играет ready.mp3
+        if (isReadySoundPlaying) return
         
         // Используем ось Y для определения вертикального движения
         val y = event.values[1] // Ось Y (вертикальная)
@@ -341,6 +357,11 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
                 return
             }
             
+            // Воспроизводим звук done.mp3 при завершении подхода (если включен звук и выбран ассистент)
+            if (settingsManager.isSoundEnabled()) {
+                playDoneSound()
+            }
+            
             // Запускаем таймер отдыха перед следующим подходом
             startRestTimer()
         } else {
@@ -409,9 +430,15 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         completeButton.visibility = View.VISIBLE
         cancelButton.visibility = View.VISIBLE
         
-        // Возобновляем отслеживание датчиков
+        // Возобновляем отслеживание датчиков после воспроизведения ready.mp3
         if (currentSetIndex < sets.size) {
-            startSensorTracking()
+            if (settingsManager.isSoundEnabled()) {
+                playReadySound {
+                    startSensorTracking()
+                }
+            } else {
+                startSensorTracking()
+            }
         }
     }
     
@@ -447,6 +474,11 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun playAssistantSound(onComplete: () -> Unit = {}) {
+        // Если звук уже играет, не запускаем новый
+        if (isAssistantSoundPlaying || assistantMediaPlayer?.isPlaying == true) {
+            return
+        }
+        
         val selectedAssistant = settingsManager.getSelectedAssistant()
         if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
             // Если звук не включен или ассистент не выбран, сразу вызываем callback
@@ -455,6 +487,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         }
         
         try {
+            // Останавливаем предыдущее воспроизведение, если есть
+            assistantMediaPlayer?.release()
+            assistantMediaPlayer = null
+            
             // Получаем список звуковых файлов ассистента
             val soundFiles = getAssistantSoundFiles(selectedAssistant)
             if (soundFiles.isEmpty()) {
@@ -469,6 +505,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             
             // Проигрываем звук
             val assetFileDescriptor: AssetFileDescriptor = assets.openFd("sound/$selectedAssistant/$randomFile")
+            isAssistantSoundPlaying = true
             assistantMediaPlayer = MediaPlayer().apply {
                 setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
                 setAudioStreamType(AudioManager.STREAM_MUSIC)
@@ -477,6 +514,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
                 setOnCompletionListener {
                     release()
                     assistantMediaPlayer = null
+                    isAssistantSoundPlaying = false
                     // Вызываем callback после завершения воспроизведения
                     onComplete()
                 }
@@ -484,12 +522,79 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             assetFileDescriptor.close()
         } catch (e: IOException) {
             e.printStackTrace()
+            isAssistantSoundPlaying = false
             // При ошибке тоже вызываем callback
             onComplete()
         } catch (e: Exception) {
             e.printStackTrace()
+            isAssistantSoundPlaying = false
             // При ошибке тоже вызываем callback
             onComplete()
+        }
+    }
+    
+    private fun playReadySound(onComplete: () -> Unit = {}) {
+        val selectedAssistant = settingsManager.getSelectedAssistant()
+        if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
+            onComplete()
+            return
+        }
+        
+        try {
+            // Останавливаем предыдущее воспроизведение, если есть
+            readyMediaPlayer?.release()
+            readyMediaPlayer = null
+            
+            // Пытаемся воспроизвести ready.mp3
+            val assetFileDescriptor: AssetFileDescriptor = assets.openFd("sound/$selectedAssistant/ready.mp3")
+            isReadySoundPlaying = true
+            readyMediaPlayer = MediaPlayer().apply {
+                setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
+                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                prepare()
+                start()
+                setOnCompletionListener {
+                    release()
+                    readyMediaPlayer = null
+                    isReadySoundPlaying = false
+                    onComplete()
+                }
+            }
+            assetFileDescriptor.close()
+        } catch (e: IOException) {
+            // Файл ready.mp3 не найден - это нормально, просто не воспроизводим
+            isReadySoundPlaying = false
+            onComplete()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            isReadySoundPlaying = false
+            onComplete()
+        }
+    }
+    
+    private fun playDoneSound() {
+        val selectedAssistant = settingsManager.getSelectedAssistant()
+        if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
+            return
+        }
+        
+        try {
+            // Пытаемся воспроизвести done.mp3
+            val assetFileDescriptor: AssetFileDescriptor = assets.openFd("sound/$selectedAssistant/done.mp3")
+            val doneMediaPlayer = MediaPlayer().apply {
+                setDataSource(assetFileDescriptor.fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length)
+                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                prepare()
+                start()
+                setOnCompletionListener {
+                    release()
+                }
+            }
+            assetFileDescriptor.close()
+        } catch (e: IOException) {
+            // Файл done.mp3 не найден - это нормально, просто не воспроизводим
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
     
@@ -500,8 +605,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             files?.forEach { file ->
                 // Проверяем, что это звуковой файл (case-insensitive)
                 val lowerFile = file.lowercase()
-                if (lowerFile.endsWith(".mp3") || lowerFile.endsWith(".wav") || 
-                    lowerFile.endsWith(".ogg") || lowerFile.endsWith(".m4a")) {
+                // Фильтруем только мотивационные файлы (motivate*)
+                if ((lowerFile.endsWith(".mp3") || lowerFile.endsWith(".wav") || 
+                    lowerFile.endsWith(".ogg") || lowerFile.endsWith(".m4a")) &&
+                    lowerFile.startsWith("motivate")) {
                     soundFiles.add(file)
                 }
             }
@@ -517,6 +624,21 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         stopSensorTracking()
         toneGenerator?.release()
         toneGenerator = null
+        
+        // Освобождаем readyMediaPlayer
+        if (readyMediaPlayer != null) {
+            try {
+                if (readyMediaPlayer?.isPlaying == true) {
+                    readyMediaPlayer?.stop()
+                }
+                readyMediaPlayer?.release()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            readyMediaPlayer = null
+            isReadySoundPlaying = false
+        }
+        
         // Не освобождаем assistantMediaPlayer здесь, если он все еще играет
         // Он освободится сам в setOnCompletionListener
         // Но если активность уничтожается принудительно (например, при повороте экрана),
