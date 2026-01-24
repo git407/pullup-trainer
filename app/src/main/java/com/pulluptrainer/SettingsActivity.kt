@@ -9,8 +9,12 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.Switch
+import android.widget.TextView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import java.io.IOException
 import java.util.Random
 
@@ -20,7 +24,13 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var assistantSpinner: Spinner
     private lateinit var themeSpinner: Spinner
     private lateinit var testSoundButton: Button
+    private lateinit var recordValueText: TextView
+    private lateinit var totalPullupsText: TextView
+    private lateinit var completedWorkoutsText: TextView
+    private lateinit var completedSetsText: TextView
+    private lateinit var resetStatisticsButton: Button
     private lateinit var settingsManager: SettingsManager
+    private lateinit var progressManager: ProgressManager
     private var testMediaPlayer: MediaPlayer? = null
     private var isPlaying: Boolean = false
     private var themeChanged: Boolean = false
@@ -46,13 +56,36 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         
+        // Устанавливаем белый цвет для кнопки назад
+        toolbar.navigationIcon?.let { icon ->
+            val wrapped = DrawableCompat.wrap(icon)
+            DrawableCompat.setTint(wrapped, ContextCompat.getColor(this, R.color.white))
+            toolbar.navigationIcon = wrapped
+        }
+        
+        // Устанавливаем белый цвет для иконок меню (три точки)
+        toolbar.overflowIcon?.let { icon ->
+            val wrapped = DrawableCompat.wrap(icon)
+            DrawableCompat.setTint(wrapped, ContextCompat.getColor(this, R.color.white))
+            toolbar.overflowIcon = wrapped
+        }
+        
         settingsManager = SettingsManager(this)
+        progressManager = ProgressManager(this)
         
         soundSwitch = findViewById(R.id.soundSwitch)
         notificationsSwitch = findViewById(R.id.notificationsSwitch)
         assistantSpinner = findViewById(R.id.assistantSpinner)
         themeSpinner = findViewById(R.id.themeSpinner)
         testSoundButton = findViewById(R.id.testSoundButton)
+        recordValueText = findViewById(R.id.recordValueText)
+        totalPullupsText = findViewById(R.id.totalPullupsText)
+        completedWorkoutsText = findViewById(R.id.completedWorkoutsText)
+        completedSetsText = findViewById(R.id.completedSetsText)
+        resetStatisticsButton = findViewById(R.id.resetStatisticsButton)
+        
+        // Загружаем и отображаем статистику
+        updateStatistics()
         
         // Загружаем текущие настройки
         soundSwitch.isChecked = settingsManager.isSoundEnabled()
@@ -169,6 +202,35 @@ class SettingsActivity : AppCompatActivity() {
         
         // Обновляем состояние кнопки при загрузке
         updateTestButtonState(savedAssistant)
+        
+        // Обработчик кнопки сброса статистики
+        resetStatisticsButton.setOnClickListener {
+            showResetStatisticsDialog()
+        }
+    }
+    
+    private fun updateStatistics() {
+        val record = progressManager.getPersonalRecord()
+        val totalPullups = progressManager.getTotalPullups()
+        val completedWorkouts = progressManager.getCompletedWorkoutsCount()
+        val completedSets = progressManager.getCompletedSetsCount()
+        
+        recordValueText.text = record.toString()
+        totalPullupsText.text = totalPullups.toString()
+        completedWorkoutsText.text = completedWorkouts.toString()
+        completedSetsText.text = completedSets.toString()
+    }
+    
+    private fun showResetStatisticsDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.settings_reset_statistics))
+            .setMessage(getString(R.string.settings_reset_statistics_confirm))
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                progressManager.resetAllStatistics()
+                updateStatistics()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
     
     private fun updateTestButtonState(assistant: String?) {
@@ -298,6 +360,12 @@ class SettingsActivity : AppCompatActivity() {
         }
         
         return assistants
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // Обновляем статистику при возврате на экран
+        updateStatistics()
     }
     
     override fun onPause() {

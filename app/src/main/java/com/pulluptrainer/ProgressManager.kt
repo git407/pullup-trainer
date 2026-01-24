@@ -102,4 +102,88 @@ class ProgressManager(context: Context) {
             .remove("active_day")
             .apply()
     }
+    
+    /**
+     * Получает личный рекорд по подтягиваниям
+     */
+    fun getPersonalRecord(): Int {
+        return prefs.getInt("personal_record", 0)
+    }
+    
+    /**
+     * Устанавливает новый личный рекорд
+     */
+    fun setPersonalRecord(record: Int) {
+        prefs.edit().putInt("personal_record", record).apply()
+    }
+    
+    /**
+     * Сбрасывает личный рекорд
+     */
+    fun resetPersonalRecord() {
+        prefs.edit().putInt("personal_record", 0).apply()
+    }
+    
+    /**
+     * Получает общее количество подтягиваний
+     */
+    fun getTotalPullups(): Int {
+        return prefs.getInt("total_pullups", 0)
+    }
+    
+    /**
+     * Увеличивает общее количество подтягиваний на указанное значение
+     */
+    fun addTotalPullups(count: Int) {
+        val current = getTotalPullups()
+        prefs.edit().putInt("total_pullups", current + count).apply()
+    }
+    
+    /**
+     * Получает количество завершенных тренировок
+     */
+    fun getCompletedWorkoutsCount(): Int {
+        var count = 0
+        for (level in WorkoutData.levels) {
+            for (day in level.days) {
+                if (isWorkoutCompleted(level.levelNumber, day.dayNumber)) {
+                    count++
+                }
+            }
+        }
+        return count
+    }
+    
+    /**
+     * Получает количество завершенных подходов
+     */
+    fun getCompletedSetsCount(): Int {
+        return prefs.getInt("completed_sets", 0)
+    }
+    
+    /**
+     * Увеличивает количество завершенных подходов
+     */
+    fun addCompletedSet() {
+        val current = getCompletedSetsCount()
+        prefs.edit().putInt("completed_sets", current + 1).apply()
+    }
+    
+    /**
+     * Сбрасывает всю статистику
+     */
+    fun resetAllStatistics() {
+        prefs.edit()
+            .putInt("personal_record", 0)
+            .putInt("total_pullups", 0)
+            .putInt("completed_sets", 0)
+            .apply()
+        
+        // Сбрасываем все отметки о выполненных тренировках
+        for (level in WorkoutData.levels) {
+            for (day in level.days) {
+                unmarkWorkoutCompleted(level.levelNumber, day.dayNumber)
+            }
+        }
+    }
 }

@@ -9,10 +9,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="current_day_bg">#FFE0E0E0</color>
     <color name="current_day_text">#FFFFFFFF</color>
-    <color name="level_header_bg">#FF4CAF50</color>
+    <color name="level_header_bg">#FFBB86FC</color>
     <color name="red">#F44336</color>
     <color name="green">#4CAF50</color>
-    <color name="lime_green">#A9DF00</color>
+    <color name="lime_green">#FFBB86FC</color>
+    <color name="lime_green_dark">#7FA300</color>
     <color name="dark_gray">#2C2C2C</color>
     <color name="light_gray">#E0E0E0</color>
 </resources>

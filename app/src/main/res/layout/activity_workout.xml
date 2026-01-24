@@ -12,7 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/purple_500"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="@color/white"
+        app:navigationIconTint="@color/white"
+        app:iconTint="@color/white"
         app:popupTheme="?attr/actionBarPopupTheme"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,15 +64,15 @@
             android:id="@+id/exerciseText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ПОДТЯГИВАНИЕ"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/dark_gray"
             android:gravity="center"
             android:letterSpacing="0.1"
-            app:layout_constraintTop_toBottomOf="@id/repsText"
+            android:text="ПОДТЯГИВАНИЙ"
+            android:textColor="@color/dark_gray"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/repsText" />
 
         <!-- Статус -->
         <TextView

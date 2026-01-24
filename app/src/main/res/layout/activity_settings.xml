@@ -11,7 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/purple_500"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:titleTextColor="@color/white"
+        app:navigationIconTint="@color/white"
+        app:iconTint="@color/white"
         app:popupTheme="?attr/actionBarPopupTheme"
         app:title="@string/settings_title"
         app:navigationIcon="?attr/homeAsUpIndicator"
@@ -19,15 +21,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp"
-        android:paddingTop="32dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:paddingTop="32dp">
 
         <!-- Переключатель звука -->
         <LinearLayout
@@ -150,6 +157,162 @@
                 android:minHeight="48dp" />
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Статистика -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_statistics"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="0dp" />
+
+            <!-- Таблица статистики -->
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="0"
+                android:shrinkColumns="1"
+                android:layout_marginBottom="12dp">
+
+                <!-- Рекорд -->
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/settings_record"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:singleLine="true" />
+
+                    <TextView
+                        android:id="@+id/recordValueText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.3"
+                        android:text="0"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:gravity="end"
+                        android:singleLine="true" />
+                </TableRow>
+
+                <!-- Всего подтягиваний -->
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/settings_total_pullups"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:singleLine="true" />
+
+                    <TextView
+                        android:id="@+id/totalPullupsText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.3"
+                        android:text="0"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:gravity="end"
+                        android:singleLine="true" />
+                </TableRow>
+
+                <!-- Количество тренировок -->
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/settings_completed_workouts"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:singleLine="true" />
+
+                    <TextView
+                        android:id="@+id/completedWorkoutsText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.3"
+                        android:text="0"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:gravity="end"
+                        android:singleLine="true" />
+                </TableRow>
+
+                <!-- Количество подходов -->
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/settings_completed_sets"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:singleLine="true" />
+
+                    <TextView
+                        android:id="@+id/completedSetsText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.3"
+                        android:text="0"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:gravity="end"
+                        android:singleLine="true" />
+                </TableRow>
+            </TableLayout>
+
+            <!-- Кнопка сброса всей статистики -->
+            <Button
+                android:id="@+id/resetStatisticsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_reset_statistics"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

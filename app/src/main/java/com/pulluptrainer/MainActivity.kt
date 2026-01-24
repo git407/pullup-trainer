@@ -12,11 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -50,6 +51,13 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+        
+        // Устанавливаем белый цвет для иконок меню (три точки)
+        toolbar.overflowIcon?.let { icon ->
+            val wrapped = DrawableCompat.wrap(icon)
+            DrawableCompat.setTint(wrapped, ContextCompat.getColor(this, R.color.white))
+            toolbar.overflowIcon = wrapped
+        }
         
         progressManager = ProgressManager(this)
         notificationHelper = NotificationHelper(this)
@@ -171,6 +179,16 @@ class MainActivity : AppCompatActivity() {
     
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        // Устанавливаем белый цвет для иконок меню
+        for (i in 0 until menu.size()) {
+            val menuItem = menu.getItem(i)
+            val icon = menuItem.icon
+            if (icon != null) {
+                val wrapped = DrawableCompat.wrap(icon)
+                DrawableCompat.setTint(wrapped, ContextCompat.getColor(this, R.color.white))
+                menuItem.icon = wrapped
+            }
+        }
         return true
     }
     
@@ -207,7 +225,7 @@ class MainActivity : AppCompatActivity() {
             completeWorkoutText
         )
         
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("День ${String.format("%02d", day)} - Уровень $level")
             .setItems(options) { _, which ->
                 when (which) {
@@ -348,10 +366,22 @@ class WorkoutAdapter(
         private val levelText: TextView = itemView.findViewById(R.id.levelText)
         private val daysCountText: TextView = itemView.findViewById(R.id.daysCountText)
         
+        private fun getDaysWord(count: Int): String {
+            val lastDigit = count % 10
+            val lastTwoDigits = count % 100
+            
+            return when {
+                lastTwoDigits in 11..14 -> "дней"
+                lastDigit == 1 -> "день"
+                lastDigit in 2..4 -> "дня"
+                else -> "дней"
+            }
+        }
+        
         fun bind(level: WorkoutLevel) {
             levelText.text = "⭐ Уровень ${level.levelNumber}"
             val daysCount = level.days.size
-            daysCountText.text = "$daysCount дней(дня)"
+            daysCountText.text = "$daysCount ${getDaysWord(daysCount)}"
         }
     }
     

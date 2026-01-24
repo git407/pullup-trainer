@@ -3,6 +3,8 @@ package com.pulluptrainer
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 
 class AboutActivity : AppCompatActivity() {
     private fun applyTheme() {
@@ -26,6 +28,20 @@ class AboutActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        
+        // Устанавливаем белый цвет для кнопки назад
+        toolbar.navigationIcon?.let { icon ->
+            val wrapped = DrawableCompat.wrap(icon)
+            DrawableCompat.setTint(wrapped, ContextCompat.getColor(this, R.color.white))
+            toolbar.navigationIcon = wrapped
+        }
+        
+        // Устанавливаем белый цвет для иконок меню (три точки)
+        toolbar.overflowIcon?.let { icon ->
+            val wrapped = DrawableCompat.wrap(icon)
+            DrawableCompat.setTint(wrapped, ContextCompat.getColor(this, R.color.white))
+            toolbar.overflowIcon = wrapped
+        }
         
         toolbar.setNavigationOnClickListener {
             finish()

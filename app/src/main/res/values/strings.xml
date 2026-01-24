@@ -21,7 +21,7 @@
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_dark">Темная</string>
     <string name="about_title">О программе</string>
-    <string name="app_version">Версия 1.0.5</string>
+    <string name="app_version">Версия 1.0.6</string>
     <string name="release_date">Дата релиза: 24.01.2026</string>
     <string name="about_developer">Разработчик</string>
     <string name="developer_name">Karasev Alexander</string>
@@ -44,4 +44,11 @@
     <string name="workout_rest">Отдых</string>
     <string name="workout_skip_button">ПРОПУСТИТЬ</string>
     <string name="workout_completed">Поздравляем, тренировка завершена!</string>
+    <string name="settings_statistics">Статистика</string>
+    <string name="settings_record">Рекорд</string>
+    <string name="settings_total_pullups">Всего подтягиваний</string>
+    <string name="settings_completed_workouts">Завершенных тренировок</string>
+    <string name="settings_completed_sets">Завершенных подходов</string>
+    <string name="settings_reset_statistics">Сбросить статистику</string>
+    <string name="settings_reset_statistics_confirm">Вы уверены, что хотите сбросить всю статистику? Это действие нельзя отменить.</string>
 </resources>
