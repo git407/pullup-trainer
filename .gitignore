@@ -86,3 +86,4 @@ lint/tmp/
 
 # Icon source files (temporary)
 icon_source*.png
+/app/*.keystore
