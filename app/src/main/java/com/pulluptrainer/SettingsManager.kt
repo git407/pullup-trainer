@@ -31,6 +31,19 @@ class SettingsManager(context: Context) {
         return if (assistant.isNullOrEmpty()) null else assistant
     }
     
+    fun getSelectedAssistantWithDefault(): String? {
+        // Если значение еще не было установлено, возвращаем "Chris" по умолчанию
+        if (!prefs.contains(KEY_ASSISTANT)) {
+            return "Chris"
+        }
+        val assistant = prefs.getString(KEY_ASSISTANT, null)
+        return if (assistant.isNullOrEmpty()) null else assistant
+    }
+    
+    fun hasAssistantBeenSet(): Boolean {
+        return prefs.contains(KEY_ASSISTANT)
+    }
+    
     fun setSelectedAssistant(assistant: String?) {
         prefs.edit().putString(KEY_ASSISTANT, assistant).apply()
     }

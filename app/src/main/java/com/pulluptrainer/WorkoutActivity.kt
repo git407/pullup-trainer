@@ -558,7 +558,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun playPullupSound() {
-        val selectedAssistant = settingsManager.getSelectedAssistant()
+        val selectedAssistant = settingsManager.getSelectedAssistantWithDefault()
         if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
             return
         }
@@ -603,7 +603,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             return
         }
         
-        val selectedAssistant = settingsManager.getSelectedAssistant()
+        val selectedAssistant = settingsManager.getSelectedAssistantWithDefault()
         if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
             // Если звук не включен или ассистент не выбран, сразу вызываем callback
             onComplete()
@@ -658,7 +658,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun playReadySound(onComplete: () -> Unit = {}) {
-        val selectedAssistant = settingsManager.getSelectedAssistant()
+        val selectedAssistant = settingsManager.getSelectedAssistantWithDefault()
         if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
             onComplete()
             return
@@ -697,7 +697,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun playDoneSound() {
-        val selectedAssistant = settingsManager.getSelectedAssistant()
+        val selectedAssistant = settingsManager.getSelectedAssistantWithDefault()
         if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
             return
         }
@@ -723,7 +723,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun playRecordSound() {
-        val selectedAssistant = settingsManager.getSelectedAssistant()
+        val selectedAssistant = settingsManager.getSelectedAssistantWithDefault()
         if (selectedAssistant == null || !settingsManager.isSoundEnabled()) {
             return
         }

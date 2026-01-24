@@ -157,6 +157,10 @@ class SettingsActivity : AppCompatActivity() {
         assistantSpinner.adapter = adapter
         
         // Устанавливаем выбранного ассистента
+        // Если ассистент еще не был выбран и "Chris" доступен, устанавливаем его по умолчанию
+        if (!settingsManager.hasAssistantBeenSet() && assistants.contains("Chris")) {
+            settingsManager.setSelectedAssistant("Chris")
+        }
         val savedAssistant = settingsManager.getSelectedAssistant()
         val selectedIndex = if (savedAssistant != null && assistants.contains(savedAssistant)) {
             assistants.indexOf(savedAssistant)
