@@ -9,6 +9,7 @@
     <string name="workout_reminder_title">Время тренировки!</string>
     <string name="workout_reminder_text">Сегодня день вашей тренировки подтягиваний</string>
     <string name="menu_settings">Настройки</string>
+    <string name="menu_statistics">Статистика</string>
     <string name="menu_about">О программе</string>
     <string name="settings_title">Настройки</string>
     <string name="settings_sound_enabled">Включить звук</string>
@@ -20,9 +21,18 @@
     <string name="settings_theme_system">Системная</string>
     <string name="settings_theme_light">Светлая</string>
     <string name="settings_theme_dark">Темная</string>
+    <string name="settings_rest_interval">Интервал отдыха между подходами</string>
+    <string name="settings_rest_interval_1_min">1 минута</string>
+    <string name="settings_rest_interval_2_min">2 минуты</string>
+    <string name="settings_rest_interval_3_min">3 минуты</string>
+    <string name="settings_workout_interval">Интервал между тренировками</string>
+    <string name="settings_workout_interval_1_day">Каждый день</string>
+    <string name="settings_workout_interval_2_days">Каждые 2 дня</string>
+    <string name="settings_workout_interval_3_days">Каждые 3 дня</string>
+    <string name="settings_notification_time">Время напоминания о тренировке</string>
     <string name="about_title">О программе</string>
-    <string name="app_version">Версия 1.0.7</string>
-    <string name="release_date">Дата релиза: 24.01.2026</string>
+    <string name="app_version">Версия 1.0.8</string>
+    <string name="release_date">Дата релиза: 04.02.2026</string>
     <string name="about_developer">Разработчик</string>
     <string name="developer_name">Karasev Alexander</string>
     <string name="developer_email">alexander@karasev.ru</string>
@@ -51,4 +61,12 @@
     <string name="settings_completed_sets">Завершенных подходов</string>
     <string name="settings_reset_statistics">Сбросить статистику</string>
     <string name="settings_reset_statistics_confirm">Вы уверены, что хотите сбросить всю статистику? Это действие нельзя отменить.</string>
+    <string name="statistics_daily_title">Подтягивания по дням</string>
+    <string name="statistics_daily_empty">Пока нет данных по дням. Выполните тренировку, чтобы увидеть график.</string>
+    <string name="statistics_chart_legend">По оси X — дни (слева направо), по высоте — количество подтягиваний. Точные цифры и даты смотрите в списке ниже.</string>
+    <string name="developer_title">Экран разработчика</string>
+    <string name="developer_tools_hint">Инструменты для отладки и тестирования. Не используйте в реальной статистике.</string>
+    <string name="developer_fill_test_data">Заполнить тестовыми данными</string>
+    <string name="developer_test_data_filled">Тестовые данные для статистики добавлены.</string>
+    <string name="settings_statistics_reset_done">Статистика успешно сброшена.</string>
 </resources>

@@ -24,11 +24,10 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var notificationsSwitch: Switch
     private lateinit var assistantSpinner: Spinner
     private lateinit var themeSpinner: Spinner
+    private lateinit var restIntervalSpinner: Spinner
+    private lateinit var workoutIntervalSpinner: Spinner
+    private lateinit var notificationTimeButton: Button
     private lateinit var testSoundButton: Button
-    private lateinit var recordValueText: TextView
-    private lateinit var totalPullupsText: TextView
-    private lateinit var completedWorkoutsText: TextView
-    private lateinit var completedSetsText: TextView
     private lateinit var resetStatisticsButton: Button
     private lateinit var settingsManager: SettingsManager
     private lateinit var progressManager: ProgressManager
@@ -78,19 +77,60 @@ class SettingsActivity : AppCompatActivity() {
         notificationsSwitch = findViewById(R.id.notificationsSwitch)
         assistantSpinner = findViewById(R.id.assistantSpinner)
         themeSpinner = findViewById(R.id.themeSpinner)
+        restIntervalSpinner = findViewById(R.id.restIntervalSpinner)
+        workoutIntervalSpinner = findViewById(R.id.workoutIntervalSpinner)
+        notificationTimeButton = findViewById(R.id.notificationTimeButton)
         testSoundButton = findViewById(R.id.testSoundButton)
-        recordValueText = findViewById(R.id.recordValueText)
-        totalPullupsText = findViewById(R.id.totalPullupsText)
-        completedWorkoutsText = findViewById(R.id.completedWorkoutsText)
-        completedSetsText = findViewById(R.id.completedSetsText)
         resetStatisticsButton = findViewById(R.id.resetStatisticsButton)
-        
-        // Загружаем и отображаем статистику
-        updateStatistics()
         
         // Загружаем текущие настройки
         soundSwitch.isChecked = settingsManager.isSoundEnabled()
         notificationsSwitch.isChecked = settingsManager.areNotificationsEnabled()
+
+        // Настраиваем выбор интервала между тренировками (1, 2, 3 дня)
+        val workoutIntervalOptions = listOf(
+            getString(R.string.settings_workout_interval_1_day),
+            getString(R.string.settings_workout_interval_2_days),
+            getString(R.string.settings_workout_interval_3_days)
+        )
+        val workoutIntervalAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            workoutIntervalOptions
+        )
+        workoutIntervalAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        workoutIntervalSpinner.adapter = workoutIntervalAdapter
+
+        val savedWorkoutInterval = settingsManager.getWorkoutIntervalDays()
+        val workoutIntervalIndex = when (savedWorkoutInterval) {
+            1 -> 0
+            3 -> 2
+            else -> 1 // 2 дня по умолчанию
+        }
+        workoutIntervalSpinner.setSelection(workoutIntervalIndex)
+
+        // Настраиваем выбор интервала отдыха (1, 2, 3 минуты)
+        val restOptions = listOf(
+            getString(R.string.settings_rest_interval_1_min),
+            getString(R.string.settings_rest_interval_2_min),
+            getString(R.string.settings_rest_interval_3_min)
+        )
+        val restAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            restOptions
+        )
+        restAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        restIntervalSpinner.adapter = restAdapter
+
+        // Устанавливаем сохранённое значение (по умолчанию 60 секунд = 1 мин)
+        val savedRestSeconds = settingsManager.getRestIntervalSeconds()
+        val restIndex = when (savedRestSeconds) {
+            120 -> 1
+            180 -> 2
+            else -> 0 // 60 сек
+        }
+        restIntervalSpinner.setSelection(restIndex)
         
         // Настраиваем выбор темы
         val themes = listOf(
@@ -183,6 +223,60 @@ class SettingsActivity : AppCompatActivity() {
                 notificationHelper.cancelNotification()
             }
         }
+
+        // Сохраняем интервал отдыха при изменении
+        restIntervalSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                val seconds = when (position) {
+                    1 -> 120
+                    2 -> 180
+                    else -> 60
+                }
+                settingsManager.setRestIntervalSeconds(seconds)
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+
+        // Сохраняем интервал между тренировками при изменении
+        workoutIntervalSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                val days = when (position) {
+                    0 -> 1
+                    2 -> 3
+                    else -> 2
+                }
+                settingsManager.setWorkoutIntervalDays(days)
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+
+        // Устанавливаем и выбираем время напоминания
+        fun updateNotificationTimeButtonText() {
+            val hour = settingsManager.getNotificationHour()
+            val minute = settingsManager.getNotificationMinute()
+            notificationTimeButton.text = String.format("%02d:%02d", hour, minute)
+        }
+
+        updateNotificationTimeButtonText()
+
+        notificationTimeButton.setOnClickListener {
+            val currentHour = settingsManager.getNotificationHour()
+            val currentMinute = settingsManager.getNotificationMinute()
+
+            val timePicker = android.app.TimePickerDialog(
+                this,
+                { _, hourOfDay, minute ->
+                    settingsManager.setNotificationTime(hourOfDay, minute)
+                    updateNotificationTimeButtonText()
+                },
+                currentHour,
+                currentMinute,
+                true
+            )
+            timePicker.show()
+        }
         
         assistantSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
@@ -207,35 +301,23 @@ class SettingsActivity : AppCompatActivity() {
         
         // Обновляем состояние кнопки при загрузке
         updateTestButtonState(savedAssistant)
-        
-        // Обработчик кнопки сброса статистики
+
+        // Сброс статистики с подтверждением
         resetStatisticsButton.setOnClickListener {
-            showResetStatisticsDialog()
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.settings_reset_statistics))
+                .setMessage(getString(R.string.settings_reset_statistics_confirm))
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    progressManager.resetAllStatistics()
+                    android.widget.Toast.makeText(
+                        this,
+                        getString(R.string.settings_statistics_reset_done),
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
-    }
-    
-    private fun updateStatistics() {
-        val record = progressManager.getPersonalRecord()
-        val totalPullups = progressManager.getTotalPullups()
-        val completedWorkouts = progressManager.getCompletedWorkoutsCount()
-        val completedSets = progressManager.getCompletedSetsCount()
-        
-        recordValueText.text = record.toString()
-        totalPullupsText.text = totalPullups.toString()
-        completedWorkoutsText.text = completedWorkouts.toString()
-        completedSetsText.text = completedSets.toString()
-    }
-    
-    private fun showResetStatisticsDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(getString(R.string.settings_reset_statistics))
-            .setMessage(getString(R.string.settings_reset_statistics_confirm))
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                progressManager.resetAllStatistics()
-                updateStatistics()
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
     }
     
     private fun updateTestButtonState(assistant: String?) {
@@ -372,8 +454,6 @@ class SettingsActivity : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
-        // Обновляем статистику при возврате на экран
-        updateStatistics()
     }
     
     override fun onPause() {

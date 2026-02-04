@@ -61,6 +61,10 @@ class MainActivity : AppCompatActivity() {
         
         progressManager = ProgressManager(this)
         notificationHelper = NotificationHelper(this)
+
+        // Если приложение открыто по нажатию на уведомление — сразу убираем это уведомление
+        androidx.core.app.NotificationManagerCompat.from(this)
+            .cancel(NotificationHelper.NOTIFICATION_ID)
         
         // Запрашиваем разрешения для уведомлений
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -96,8 +100,11 @@ class MainActivity : AppCompatActivity() {
                 val currentDay = progressManager.getCurrentDay()
                 val nextWorkout = DateUtils.getNextWorkoutLevelAndDay(currentLevel, currentDay)
                 if (nextWorkout != null) {
-                    val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay)
-                    notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second)
+                    val workoutInterval = settingsManager.getWorkoutIntervalDays()
+                    val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
+                    val hour = settingsManager.getNotificationHour()
+                    val minute = settingsManager.getNotificationMinute()
+                    notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second, hour, minute)
                 }
             }
         } else {
@@ -135,9 +142,12 @@ class MainActivity : AppCompatActivity() {
                 val currentDay = progressManager.getCurrentDay()
                 val nextWorkout = DateUtils.getNextWorkoutLevelAndDay(currentLevel, currentDay)
                 if (nextWorkout != null) {
-                    val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay)
+                    val workoutInterval = settingsManager.getWorkoutIntervalDays()
+                    val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
                     notificationHelper.cancelNotification()
-                    notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second)
+                    val hour = settingsManager.getNotificationHour()
+                    val minute = settingsManager.getNotificationMinute()
+                    notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second, hour, minute)
                 }
             }
         } else {
@@ -199,6 +209,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+            R.id.menu_statistics -> {
+                val intent = Intent(this, StatisticsActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.menu_about -> {
                 val intent = Intent(this, AboutActivity::class.java)
                 startActivity(intent)
@@ -241,9 +256,12 @@ class MainActivity : AppCompatActivity() {
                             val currentDay = progressManager.getCurrentDay()
                             val nextWorkout = DateUtils.getNextWorkoutLevelAndDay(currentLevel, currentDay)
                             if (nextWorkout != null) {
-                                val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay)
+                                val workoutInterval = settingsManager.getWorkoutIntervalDays()
+                                val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
                                 notificationHelper.cancelNotification()
-                                notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second)
+                                val hour = settingsManager.getNotificationHour()
+                                val minute = settingsManager.getNotificationMinute()
+                                notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second, hour, minute)
                             }
                         } else {
                             notificationHelper.cancelNotification()
@@ -269,9 +287,12 @@ class MainActivity : AppCompatActivity() {
                             val currentDay = progressManager.getCurrentDay()
                             val nextWorkout = DateUtils.getNextWorkoutLevelAndDay(currentLevel, currentDay)
                             if (nextWorkout != null) {
-                                val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay)
+                                val workoutInterval = settingsManager.getWorkoutIntervalDays()
+                                val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
                                 notificationHelper.cancelNotification()
-                                notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second)
+                                val hour = settingsManager.getNotificationHour()
+                                val minute = settingsManager.getNotificationMinute()
+                                notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second, hour, minute)
                             }
                         } else {
                             notificationHelper.cancelNotification()
@@ -405,7 +426,9 @@ class WorkoutAdapter(
             setsText.text = day.getSetsString()
             
             // Рассчитываем и отображаем дату
-            val workoutDate = DateUtils.getWorkoutDate(startDate, level, day.dayNumber)
+            val settingsManager = SettingsManager(itemView.context)
+            val workoutInterval = settingsManager.getWorkoutIntervalDays()
+            val workoutDate = DateUtils.getWorkoutDate(startDate, level, day.dayNumber, workoutInterval)
             if (workoutDate != 0L) {
                 if (DateUtils.isToday(workoutDate) && isCurrent) {
                     dateText.text = itemView.context.getString(R.string.today)

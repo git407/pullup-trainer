@@ -37,7 +37,7 @@ class NotificationHelper(private val context: Context) {
     /**
      * Планирует уведомление на указанную дату
      */
-    fun scheduleNotification(timestamp: Long, level: Int, day: Int) {
+    fun scheduleNotification(timestamp: Long, level: Int, day: Int, hour: Int = 10, minute: Int = 0) {
         if (timestamp == 0L) return
         
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -54,11 +54,11 @@ class NotificationHelper(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         
-        // Устанавливаем будильник на начало дня (8:00 утра)
+        // Устанавливаем будильник на заданное время (по умолчанию 10:00)
         val calendar = java.util.Calendar.getInstance().apply {
             timeInMillis = timestamp
-            set(java.util.Calendar.HOUR_OF_DAY, 8)
-            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.HOUR_OF_DAY, hour)
+            set(java.util.Calendar.MINUTE, minute)
             set(java.util.Calendar.SECOND, 0)
             set(java.util.Calendar.MILLISECOND, 0)
         }

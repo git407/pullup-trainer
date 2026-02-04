@@ -10,8 +10,8 @@ android {
         applicationId "com.pulluptrainer"
         minSdk = 26
         targetSdk = compileSdk
-        versionCode = 2
-        versionName = "1.0.6"
+        versionCode = 3
+        versionName = "1.0.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -49,4 +49,5 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.10.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
 }

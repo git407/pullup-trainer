@@ -130,6 +130,87 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Интервал отдыха между подходами -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_rest_interval"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="0dp" />
+
+            <Spinner
+                android:id="@+id/restIntervalSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" />
+        </LinearLayout>
+
+        <!-- Интервал между тренировками -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_workout_interval"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="0dp" />
+
+            <Spinner
+                android:id="@+id/workoutIntervalSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" />
+        </LinearLayout>
+
+        <!-- Время напоминания о тренировке -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/settings_notification_time"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary" />
+
+            <Button
+                android:id="@+id/notificationTimeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+
         <!-- Выбор темы -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -157,7 +238,7 @@
                 android:minHeight="48dp" />
         </LinearLayout>
 
-        <!-- Статистика -->
+        <!-- Сброс статистики -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -168,142 +249,6 @@
             android:paddingTop="16dp"
             android:paddingBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_statistics"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary"
-                android:layout_marginBottom="12dp"
-                android:layout_marginStart="0dp" />
-
-            <!-- Таблица статистики -->
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="0"
-                android:shrinkColumns="1"
-                android:layout_marginBottom="12dp">
-
-                <!-- Рекорд -->
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/settings_record"
-                        android:textSize="16sp"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:singleLine="true" />
-
-                    <TextView
-                        android:id="@+id/recordValueText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3"
-                        android:text="0"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:gravity="end"
-                        android:singleLine="true" />
-                </TableRow>
-
-                <!-- Всего подтягиваний -->
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/settings_total_pullups"
-                        android:textSize="16sp"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:singleLine="true" />
-
-                    <TextView
-                        android:id="@+id/totalPullupsText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3"
-                        android:text="0"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:gravity="end"
-                        android:singleLine="true" />
-                </TableRow>
-
-                <!-- Количество тренировок -->
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/settings_completed_workouts"
-                        android:textSize="16sp"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:singleLine="true" />
-
-                    <TextView
-                        android:id="@+id/completedWorkoutsText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3"
-                        android:text="0"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:gravity="end"
-                        android:singleLine="true" />
-                </TableRow>
-
-                <!-- Количество подходов -->
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/settings_completed_sets"
-                        android:textSize="16sp"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:singleLine="true" />
-
-                    <TextView
-                        android:id="@+id/completedSetsText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3"
-                        android:text="0"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:gravity="end"
-                        android:singleLine="true" />
-                </TableRow>
-            </TableLayout>
-
-            <!-- Кнопка сброса всей статистики -->
             <Button
                 android:id="@+id/resetStatisticsButton"
                 android:layout_width="match_parent"

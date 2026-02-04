@@ -31,14 +31,15 @@ object DateUtils {
      * @param dayNumber номер дня в уровне (1-based)
      * @return дата тренировки (timestamp)
      */
-    fun getWorkoutDate(startDate: Long, level: Int, dayNumber: Int): Long {
+    fun getWorkoutDate(startDate: Long, level: Int, dayNumber: Int, workoutIntervalDays: Int = 2): Long {
         if (startDate == 0L) return 0L
         
         val globalDayNumber = getGlobalDayNumber(level, dayNumber)
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = startDate
-        // Интервал 2 дня между тренировками (день 1 = день 0, день 2 = день 2, день 3 = день 4 и т.д.)
-        val daysToAdd = (globalDayNumber - 1) * 2
+        // Интервал между тренировками (день 1 = день 0, день 2 = interval, день 3 = interval*2 и т.д.)
+        val interval = if (workoutIntervalDays <= 0) 1 else workoutIntervalDays
+        val daysToAdd = (globalDayNumber - 1) * interval
         calendar.add(Calendar.DAY_OF_YEAR, daysToAdd)
         return calendar.timeInMillis
     }
@@ -49,13 +50,14 @@ object DateUtils {
      * @param dayNumber общий номер дня (1-based)
      * @return дата тренировки (timestamp)
      */
-    fun getWorkoutDateByGlobalDay(startDate: Long, dayNumber: Int): Long {
+    fun getWorkoutDateByGlobalDay(startDate: Long, dayNumber: Int, workoutIntervalDays: Int = 2): Long {
         if (startDate == 0L) return 0L
         
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = startDate
-        // Интервал 2 дня между тренировками (день 1 = день 0, день 2 = день 2, день 3 = день 4 и т.д.)
-        val daysToAdd = (dayNumber - 1) * 2
+        // Интервал между тренировками (день 1 = день 0, день 2 = interval, день 3 = interval*2 и т.д.)
+        val interval = if (workoutIntervalDays <= 0) 1 else workoutIntervalDays
+        val daysToAdd = (dayNumber - 1) * interval
         calendar.add(Calendar.DAY_OF_YEAR, daysToAdd)
         return calendar.timeInMillis
     }
@@ -86,9 +88,9 @@ object DateUtils {
     /**
      * Получает дату следующей тренировки
      */
-    fun getNextWorkoutDate(startDate: Long, currentLevel: Int, currentDay: Int): Long {
+    fun getNextWorkoutDate(startDate: Long, currentLevel: Int, currentDay: Int, workoutIntervalDays: Int = 2): Long {
         val globalDayNumber = getGlobalDayNumber(currentLevel, currentDay)
-        return getWorkoutDateByGlobalDay(startDate, globalDayNumber + 1)
+        return getWorkoutDateByGlobalDay(startDate, globalDayNumber + 1, workoutIntervalDays)
     }
     
     /**

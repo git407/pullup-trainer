@@ -39,6 +39,18 @@
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.PullUpTrainer" />
+
+        <activity
+            android:name=".DeveloperActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.PullUpTrainer" />
+
+        <activity
+            android:name=".StatisticsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.PullUpTrainer" />
         
         <activity
             android:name=".WorkoutActivity"

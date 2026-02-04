@@ -76,6 +76,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     private var initialRecord: Int = 0 // Начальный рекорд до начала тренировки (для проверки, был ли рекорд установлен)
     private var totalRepsInWorkout: Int = 0 // Общее количество подтягиваний в текущей тренировке
     private var recordSoundPlayed: Boolean = false // Флаг, был ли уже проигран звук record.mp3 в текущей тренировке
+    private var isWorkoutFinished: Boolean = false // Флаг, что тренировка завершена
     
     // Переменные для определения подтягивания
     private var lastY: Float = 0f
@@ -191,6 +192,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         // Сбрасываем счетчик подтягиваний в тренировке и флаг звука рекорда
         totalRepsInWorkout = 0
         recordSoundPlayed = false
+        isWorkoutFinished = false
     }
     
     private fun updateProgressBar() {
@@ -367,7 +369,8 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun completeSet() {
-        if (currentSetIndex < 0) return
+        // Если тренировка не начата, уже завершена или сейчас играет финальная фраза — игнорируем нажатия
+        if (currentSetIndex < 0 || isWorkoutFinished || isAssistantSoundPlaying) return
         
         // Увеличиваем счетчик повторений в текущем подходе
         currentRepIndex++
@@ -378,6 +381,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         // Увеличиваем общее количество подтягиваний в базе данных
         val progressManager = ProgressManager(this)
         progressManager.addTotalPullups(1)
+        progressManager.addPullupsForToday(1)
         
         // Проверяем, является ли это последним подтягиванием в подходе
         val isLastRepInSet = currentRepIndex >= sets[currentSetIndex]
@@ -417,6 +421,11 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             
             // Если это последний подход, обновляем отображение чтобы показать 0 перед завершением
             if (currentSetIndex >= sets.size - 1) {
+                isWorkoutFinished = true
+                // Блокируем кнопки, чтобы избежать повторных нажатий
+                completeButton.isEnabled = false
+                cancelButton.isEnabled = false
+                skipButton.isEnabled = false
                 // Обновляем отображение чтобы показать 0
                 repsText.text = "0"
                 statusText.text = "ЗАВЕРШЕНО"
@@ -469,13 +478,18 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         statusText.visibility = View.GONE
         timerText.visibility = View.VISIBLE
         skipButton.visibility = View.VISIBLE
-        timerText.text = "01:00" // Устанавливаем начальное значение
+
+        // Получаем интервал отдыха из настроек (в секундах)
+        val restSeconds = settingsManager.getRestIntervalSeconds()
+        val minutes = restSeconds / 60
+        val seconds = restSeconds % 60
+        timerText.text = String.format("%02d:%02d", minutes, seconds) // Устанавливаем начальное значение
         
         // Отменяем предыдущий таймер, если он есть
         countDownTimer?.cancel()
         
-        // Создаем таймер на 60 секунд (1 минута)
-        countDownTimer = object : CountDownTimer(60000, 1000) {
+        // Создаем таймер на выбранный интервал
+        countDownTimer = object : CountDownTimer(restSeconds * 1000L, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val totalSeconds = (millisUntilFinished / 1000).toInt()
                 val minutes = totalSeconds / 60
