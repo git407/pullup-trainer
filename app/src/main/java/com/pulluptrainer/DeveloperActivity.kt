@@ -50,7 +50,11 @@ class DeveloperActivity : AppCompatActivity() {
         val fillTestDataButton: Button = findViewById(R.id.fillTestDataButton)
         fillTestDataButton.setOnClickListener {
             progressManager.fillTestDataForDebug()
-            Toast.makeText(this, getString(R.string.developer_test_data_filled), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.developer_test_data_filled), Toast.LENGTH_LONG).show()
+        }
+        findViewById<Button>(R.id.testNotificationButton).setOnClickListener {
+            NotificationHelper(this).showWorkoutReminder(this, progressManager.getCurrentLevel(), progressManager.getCurrentDay())
+            Toast.makeText(this, getString(R.string.developer_notification_shown), Toast.LENGTH_SHORT).show()
         }
     }
 }

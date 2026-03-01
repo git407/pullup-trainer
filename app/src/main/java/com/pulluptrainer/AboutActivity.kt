@@ -2,6 +2,7 @@ package com.pulluptrainer
 
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -51,6 +52,8 @@ class AboutActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+
+        findViewById<TextView>(R.id.versionTextView).text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
 
         // Пасхалка: 7 нажатий по логотипу открывают экран разработчика
         val logoView: ImageView = findViewById(R.id.logoImageView)

@@ -168,6 +168,18 @@ class ProgressManager(context: Context) {
     }
 
     /**
+     * Добавляет подтягивания за указанную дату (timestamp — полночь дня).
+     */
+    private fun addPullupsForDate(dateMidnightMs: Long, count: Int) {
+        if (count <= 0) return
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = dateMidnightMs
+        val key = "daily_pullups_${String.format("%04d%02d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))}"
+        val current = prefs.getInt(key, 0)
+        prefs.edit().putInt(key, current + count).apply()
+    }
+
+    /**
      * Возвращает статистику по дням: список (timestamp, количество), отсортированный по дате.
      * timestamp — полночь соответствующего дня.
      */
@@ -256,52 +268,48 @@ class ProgressManager(context: Context) {
     }
 
     /**
-     * Заполняет статистику тестовыми данными для отладки.
-     * Несколько тренировок в разные дни + записи по дням.
+     * Заполняет тестовыми данными: отмечает все тренировки до текущей даты выполненными
+     * и добавляет их в статистику с датами, как будто они были сделаны в те дни.
      */
     fun fillTestDataForDebug() {
+        val startDate = getStartDate()
+        if (startDate == 0L) return
+        resetAllStatistics()
+        val currentLevel = getCurrentLevel()
+        val currentDay = getCurrentDay()
+        val settingsManager = SettingsManager(appContext)
+        val workoutInterval = settingsManager.getWorkoutIntervalDays().coerceAtLeast(1)
+        val currentWorkoutDate = DateUtils.getWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
+        val todayMidnight = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        var totalPullups = getTotalPullups()
+        var completedSets = getCompletedSetsCount()
+        var personalRecord = getPersonalRecord()
+
         val editor = prefs.edit()
-
-        // Базовая статистика
-        editor.putInt("personal_record", 20)
-        editor.putInt("total_pullups", 150)
-        editor.putInt("completed_sets", 40)
-
-        // Несколько выполненных тренировок (уровень 1, дни 1–3)
-        editor.putBoolean("completed_1_1", true)
-        editor.putBoolean("completed_1_2", true)
-        editor.putBoolean("completed_1_3", true)
-
-        // Текущий прогресс – пусть будет уровень 1, день 4
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
-        cal.set(Calendar.MILLISECOND, 0)
-        editor.putInt(KEY_CURRENT_LEVEL, 1)
-        editor.putInt(KEY_CURRENT_DAY, 4)
-        editor.putLong(KEY_START_DATE, cal.timeInMillis)
-
-        // Подтягивания по дням: последние несколько дней
-        fun keyForOffset(offsetDays: Int): String {
-            val c = Calendar.getInstance()
-            c.add(Calendar.DAY_OF_YEAR, offsetDays)
-            c.set(Calendar.HOUR_OF_DAY, 0)
-            c.set(Calendar.MINUTE, 0)
-            c.set(Calendar.SECOND, 0)
-            c.set(Calendar.MILLISECOND, 0)
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH) + 1
-            val day = c.get(Calendar.DAY_OF_MONTH)
-            return "daily_pullups_${String.format("%04d%02d%02d", year, month, day)}"
+        for (level in WorkoutData.levels) {
+            for (day in level.days) {
+                val workoutDate = DateUtils.getWorkoutDate(startDate, level.levelNumber, day.dayNumber, workoutInterval)
+                if (workoutDate == 0L) continue
+                // Только прошлые тренировки: дата тренировки строго до текущей и не в будущем
+                if (workoutDate >= currentWorkoutDate || workoutDate > todayMidnight) continue
+                val pullups = day.sets.sum()
+                val setsCount = day.sets.size
+                editor.putBoolean("completed_${level.levelNumber}_${day.dayNumber}", true)
+                addPullupsForDate(workoutDate, pullups)
+                totalPullups += pullups
+                completedSets += setsCount
+                if (pullups > personalRecord) personalRecord = pullups
+            }
         }
-
-        editor.putInt(keyForOffset(-6), 10) // 6 дней назад
-        editor.putInt(keyForOffset(-4), 12) // 4 дня назад
-        editor.putInt(keyForOffset(-2), 14) // 2 дня назад
-        editor.putInt(keyForOffset(-1), 15) // вчера
-        editor.putInt(keyForOffset(0), 16)  // сегодня
-
+        editor.putInt("total_pullups", totalPullups)
+        editor.putInt("completed_sets", completedSets)
+        editor.putInt("personal_record", personalRecord)
         editor.apply()
     }
 }

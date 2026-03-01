@@ -92,20 +92,17 @@ class MainActivity : AppCompatActivity() {
         }
         recyclerView.adapter = adapter
         
-        // Планируем уведомление при запуске приложения (если уведомления включены)
+        // Планируем уведомление на дату текущей тренировки (если уведомления включены)
         if (settingsManager.areNotificationsEnabled()) {
             val startDate = progressManager.getStartDate()
             if (startDate != 0L) {
                 val currentLevel = progressManager.getCurrentLevel()
                 val currentDay = progressManager.getCurrentDay()
-                val nextWorkout = DateUtils.getNextWorkoutLevelAndDay(currentLevel, currentDay)
-                if (nextWorkout != null) {
-                    val workoutInterval = settingsManager.getWorkoutIntervalDays()
-                    val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
-                    val hour = settingsManager.getNotificationHour()
-                    val minute = settingsManager.getNotificationMinute()
-                    notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second, hour, minute)
-                }
+                val workoutInterval = settingsManager.getWorkoutIntervalDays()
+                val currentWorkoutDate = DateUtils.getWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
+                val hour = settingsManager.getNotificationHour()
+                val minute = settingsManager.getNotificationMinute()
+                notificationHelper.scheduleNotification(currentWorkoutDate, currentLevel, currentDay, hour, minute)
             }
         } else {
             // Если уведомления отключены, отменяем запланированные
@@ -135,20 +132,16 @@ class MainActivity : AppCompatActivity() {
         
         // Проверяем настройку уведомлений и обновляем их при необходимости
         if (settingsManager.areNotificationsEnabled()) {
-            // Если уведомления включены, планируем их заново
             val startDate = progressManager.getStartDate()
             if (startDate != 0L) {
                 val currentLevel = progressManager.getCurrentLevel()
                 val currentDay = progressManager.getCurrentDay()
-                val nextWorkout = DateUtils.getNextWorkoutLevelAndDay(currentLevel, currentDay)
-                if (nextWorkout != null) {
-                    val workoutInterval = settingsManager.getWorkoutIntervalDays()
-                    val nextWorkoutDate = DateUtils.getNextWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
-                    notificationHelper.cancelNotification()
-                    val hour = settingsManager.getNotificationHour()
-                    val minute = settingsManager.getNotificationMinute()
-                    notificationHelper.scheduleNotification(nextWorkoutDate, nextWorkout.first, nextWorkout.second, hour, minute)
-                }
+                val workoutInterval = settingsManager.getWorkoutIntervalDays()
+                val currentWorkoutDate = DateUtils.getWorkoutDate(startDate, currentLevel, currentDay, workoutInterval)
+                notificationHelper.cancelNotification()
+                val hour = settingsManager.getNotificationHour()
+                val minute = settingsManager.getNotificationMinute()
+                notificationHelper.scheduleNotification(currentWorkoutDate, currentLevel, currentDay, hour, minute)
             }
         } else {
             // Если уведомления отключены, отменяем запланированные
