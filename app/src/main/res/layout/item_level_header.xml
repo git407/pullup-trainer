@@ -14,13 +14,13 @@
         android:layout_weight="1"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/dark_gray" />
+        android:textColor="@color/level_header_text" />
 
     <TextView
         android:id="@+id/daysCountText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:textColor="@color/dark_gray" />
+        android:textColor="@color/level_header_text" />
 
 </LinearLayout>

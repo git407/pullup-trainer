@@ -130,8 +130,8 @@ class StatisticsActivity : AppCompatActivity() {
         }
 
         val dataSet = LineDataSet(entries, getString(R.string.statistics_daily_title)).apply {
-            color = ContextCompat.getColor(this@StatisticsActivity, R.color.purple_500)
-            setCircleColor(ContextCompat.getColor(this@StatisticsActivity, R.color.purple_500))
+            color = ContextCompat.getColor(this@StatisticsActivity, R.color.primary)
+            setCircleColor(ContextCompat.getColor(this@StatisticsActivity, R.color.primary))
             lineWidth = 2f
             circleRadius = 3f
             setDrawValues(true)

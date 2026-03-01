@@ -470,7 +470,7 @@ class WorkoutAdapter(
                 // Для выделенного элемента используем черный текст на сером фоне
                 val textColor = ContextCompat.getColor(itemView.context, android.R.color.black)
                 dayText.setTextColor(textColor)
-                dateText.setTextColor(ContextCompat.getColor(itemView.context, android.R.color.darker_gray))
+                dateText.setTextColor(ContextCompat.getColor(itemView.context, R.color.dark_gray))
                 setsText.setTextColor(textColor)
                 currentDayIcon.visibility = View.VISIBLE
                 currentDayIcon.setColorFilter(textColor)

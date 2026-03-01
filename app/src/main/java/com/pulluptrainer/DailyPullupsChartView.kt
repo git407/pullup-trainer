@@ -17,12 +17,12 @@ class DailyPullupsChartView @JvmOverloads constructor(
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeWidth = 4f * resources.displayMetrics.density
-        color = ContextCompat.getColor(context, R.color.purple_500)
+        color = ContextCompat.getColor(context, R.color.primary)
     }
 
     private val pointPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-        color = ContextCompat.getColor(context, R.color.purple_500)
+        color = ContextCompat.getColor(context, R.color.primary)
     }
 
     private val gridPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

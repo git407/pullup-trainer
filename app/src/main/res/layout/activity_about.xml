@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/purple_500"
+        android:background="?attr/colorPrimary"
         app:titleTextColor="@color/white"
         app:navigationIconTint="@color/white"
         app:iconTint="@color/white"
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_version"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="?android:attr/textColorSecondary"
                 android:layout_marginBottom="8dp" />
 
             <TextView
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/release_date"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="?android:attr/textColorSecondary"
                 android:layout_marginBottom="32dp" />
 
             <TextView
@@ -115,7 +115,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
+                android:background="@color/divider"
                 android:layout_marginBottom="24dp" />
 
             <TextView
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/copyright"
                 android:textSize="12sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="?android:attr/textColorSecondary"
                 android:layout_marginTop="16dp" />
 
         </LinearLayout>
