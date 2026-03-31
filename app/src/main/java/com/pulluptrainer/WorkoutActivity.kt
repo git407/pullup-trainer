@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.graphics.Typeface
 import java.io.IOException
 import java.util.Random
@@ -145,7 +146,9 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         completeButton = findViewById(R.id.completeButton)
         cancelButton = findViewById(R.id.cancelButton)
         skipButton = findViewById(R.id.skipButton)
-        
+
+        EdgeToEdge.applyToolbarAndBottomInsets(toolbar, findViewById(R.id.bottomBar))
+
         // Вычисляем общее количество повторений
         totalRepsRemaining = sets.sum()
         overallCountText.text = totalRepsRemaining.toString()
@@ -506,9 +509,16 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun skipRest() {
-        // Отменяем таймер и переходим к следующему подходу
-        countDownTimer?.cancel()
-        moveToNextSet()
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.workout_skip_rest_title))
+            .setMessage(getString(R.string.workout_skip_rest_message))
+            .setPositiveButton(getString(R.string.workout_skip_rest_confirm)) { _, _ ->
+                // Отменяем таймер и переходим к следующему подходу
+                countDownTimer?.cancel()
+                moveToNextSet()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
     
     private fun moveToNextSet() {

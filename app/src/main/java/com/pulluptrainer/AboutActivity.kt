@@ -53,6 +53,8 @@ class AboutActivity : AppCompatActivity() {
             finish()
         }
 
+        EdgeToEdge.applyToolbarAndBottomInsets(toolbar, findViewById(R.id.aboutScrollView))
+
         findViewById<TextView>(R.id.versionTextView).text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
 
         // Пасхалка: 7 нажатий по логотипу открывают экран разработчика

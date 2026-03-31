@@ -58,6 +58,8 @@ class StatisticsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = getString(R.string.menu_statistics)
 
+        EdgeToEdge.applyToolbarAndBottomInsets(toolbar, findViewById(R.id.statsScrollView))
+
         // Устанавливаем белый цвет для кнопки назад
         toolbar.navigationIcon?.let { icon ->
             val wrapped = DrawableCompat.wrap(icon)

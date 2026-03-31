@@ -5,19 +5,25 @@ import android.content.res.AssetManager
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.Random
+import org.json.JSONObject
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var soundSwitch: Switch
@@ -28,12 +34,30 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var workoutIntervalSpinner: Spinner
     private lateinit var notificationTimeButton: Button
     private lateinit var testSoundButton: Button
+    private lateinit var exportBackupButton: Button
+    private lateinit var importBackupButton: Button
     private lateinit var resetStatisticsButton: Button
     private lateinit var settingsManager: SettingsManager
     private lateinit var progressManager: ProgressManager
     private var testMediaPlayer: MediaPlayer? = null
     private var isPlaying: Boolean = false
     private var themeChanged: Boolean = false
+
+    private val exportBackupLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        if (uri != null) {
+            exportBackupToUri(uri)
+        }
+    }
+
+    private val importBackupLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            importBackupFromUri(uri)
+        }
+    }
     
     private fun applyTheme() {
         val settingsManager = SettingsManager(this)
@@ -72,7 +96,9 @@ class SettingsActivity : AppCompatActivity() {
         
         settingsManager = SettingsManager(this)
         progressManager = ProgressManager(this)
-        
+
+        EdgeToEdge.applyToolbarAndBottomInsets(toolbar, findViewById(R.id.settingsScrollView))
+
         soundSwitch = findViewById(R.id.soundSwitch)
         notificationsSwitch = findViewById(R.id.notificationsSwitch)
         assistantSpinner = findViewById(R.id.assistantSpinner)
@@ -81,6 +107,8 @@ class SettingsActivity : AppCompatActivity() {
         workoutIntervalSpinner = findViewById(R.id.workoutIntervalSpinner)
         notificationTimeButton = findViewById(R.id.notificationTimeButton)
         testSoundButton = findViewById(R.id.testSoundButton)
+        exportBackupButton = findViewById(R.id.exportBackupButton)
+        importBackupButton = findViewById(R.id.importBackupButton)
         resetStatisticsButton = findViewById(R.id.resetStatisticsButton)
         
         // Загружаем текущие настройки
@@ -276,6 +304,22 @@ class SettingsActivity : AppCompatActivity() {
                 true
             )
             timePicker.show()
+        }
+
+        exportBackupButton.setOnClickListener {
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(java.util.Date())
+            exportBackupLauncher.launch("pullup_backup_$timestamp.json")
+        }
+
+        importBackupButton.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.settings_import_backup))
+                .setMessage(getString(R.string.settings_import_backup_confirm))
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    importBackupLauncher.launch(arrayOf("application/json", "text/plain"))
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
         
         assistantSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
@@ -477,5 +521,112 @@ class SettingsActivity : AppCompatActivity() {
     override fun onBackPressed() {
         // Просто закрываем активность, тема уже применена при выборе
         super.onBackPressed()
+    }
+
+    private fun exportBackupToUri(uri: Uri) {
+        try {
+            val backup = JSONObject().apply {
+                put("version", 1)
+                put("exportedAt", System.currentTimeMillis())
+                put("pullup_settings", exportPreferences("pullup_settings"))
+                put("pullup_progress", exportPreferences("pullup_progress"))
+            }
+
+            contentResolver.openOutputStream(uri)?.use { out ->
+                out.write(backup.toString(2).toByteArray(Charsets.UTF_8))
+            } ?: throw IOException("Cannot open output stream")
+
+            Toast.makeText(this, getString(R.string.settings_backup_export_done), Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, getString(R.string.settings_backup_export_failed), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun importBackupFromUri(uri: Uri) {
+        try {
+            val text = contentResolver.openInputStream(uri)?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }
+                ?: throw IOException("Cannot open input stream")
+            val root = JSONObject(text)
+
+            importPreferences("pullup_settings", root.getJSONObject("pullup_settings"))
+            importPreferences("pullup_progress", root.getJSONObject("pullup_progress"))
+
+            Toast.makeText(this, getString(R.string.settings_backup_import_done), Toast.LENGTH_LONG).show()
+            recreate()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, getString(R.string.settings_backup_import_failed), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun exportPreferences(prefName: String): JSONObject {
+        val prefs = getSharedPreferences(prefName, MODE_PRIVATE)
+        val out = JSONObject()
+        for ((key, value) in prefs.all) {
+            val entry = JSONObject()
+            when (value) {
+                is String -> {
+                    entry.put("type", "string")
+                    entry.put("value", value)
+                }
+                is Int -> {
+                    entry.put("type", "int")
+                    entry.put("value", value)
+                }
+                is Long -> {
+                    entry.put("type", "long")
+                    entry.put("value", value)
+                }
+                is Float -> {
+                    entry.put("type", "float")
+                    entry.put("value", value.toDouble())
+                }
+                is Boolean -> {
+                    entry.put("type", "boolean")
+                    entry.put("value", value)
+                }
+                is Set<*> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val strSet = value.filterIsInstance<String>().toSet()
+                    entry.put("type", "string_set")
+                    entry.put("value", org.json.JSONArray(strSet.toList()))
+                }
+                else -> continue
+            }
+            out.put(key, entry)
+        }
+        return out
+    }
+
+    private fun importPreferences(prefName: String, json: JSONObject) {
+        val prefs = getSharedPreferences(prefName, MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.clear()
+
+        val keys = json.keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            val entry = json.getJSONObject(key)
+            val type = entry.getString("type")
+            when (type) {
+                "string" -> editor.putString(key, entry.optString("value", ""))
+                "int" -> editor.putInt(key, entry.optInt("value", 0))
+                "long" -> editor.putLong(key, entry.optLong("value", 0L))
+                "float" -> editor.putFloat(key, entry.optDouble("value", 0.0).toFloat())
+                "boolean" -> editor.putBoolean(key, entry.optBoolean("value", false))
+                "string_set" -> {
+                    val arr = entry.optJSONArray("value")
+                    val result = mutableSetOf<String>()
+                    if (arr != null) {
+                        for (i in 0 until arr.length()) {
+                            result.add(arr.optString(i))
+                        }
+                    }
+                    editor.putStringSet(key, result)
+                }
+            }
+        }
+        editor.apply()
     }
 }

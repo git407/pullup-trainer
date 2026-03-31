@@ -3,6 +3,7 @@ package com.pulluptrainer
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -45,6 +46,8 @@ class DeveloperActivity : AppCompatActivity() {
 
         toolbar.setNavigationOnClickListener { finish() }
 
+        EdgeToEdge.applyToolbarAndBottomInsets(toolbar, findViewById(R.id.developerContent))
+
         progressManager = ProgressManager(this)
 
         val fillTestDataButton: Button = findViewById(R.id.fillTestDataButton)
@@ -53,7 +56,12 @@ class DeveloperActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.developer_test_data_filled), Toast.LENGTH_LONG).show()
         }
         findViewById<Button>(R.id.testNotificationButton).setOnClickListener {
-            NotificationHelper(this).showWorkoutReminder(this, progressManager.getCurrentLevel(), progressManager.getCurrentDay())
+            val intent = Intent(this, WorkoutReminderReceiver::class.java).apply {
+                putExtra("notification_id", NotificationHelper.NOTIFICATION_ID)
+                putExtra("level", progressManager.getCurrentLevel())
+                putExtra("day", progressManager.getCurrentDay())
+            }
+            sendBroadcast(intent)
             Toast.makeText(this, getString(R.string.developer_notification_shown), Toast.LENGTH_SHORT).show()
         }
     }

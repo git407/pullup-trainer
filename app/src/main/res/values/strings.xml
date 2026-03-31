@@ -57,6 +57,9 @@
     <string name="workout_single_set">%1$d повторений</string>
     <string name="workout_rest">Отдых</string>
     <string name="workout_skip_button">ПРОПУСТИТЬ</string>
+    <string name="workout_skip_rest_title">Пропустить отдых?</string>
+    <string name="workout_skip_rest_message">Вы собираетесь начать следующий подход до окончания отдыха. Продолжить?</string>
+    <string name="workout_skip_rest_confirm">Начать подход</string>
     <string name="workout_completed">Поздравляем, тренировка завершена!</string>
     <string name="settings_statistics">Статистика</string>
     <string name="settings_record">Рекорд</string>
@@ -65,6 +68,13 @@
     <string name="settings_completed_sets">Завершенных подходов</string>
     <string name="settings_reset_statistics">Сбросить статистику</string>
     <string name="settings_reset_statistics_confirm">Вы уверены, что хотите сбросить всю статистику? Это действие нельзя отменить.</string>
+    <string name="settings_export_backup">Экспортировать резервную копию</string>
+    <string name="settings_import_backup">Импортировать резервную копию</string>
+    <string name="settings_import_backup_confirm">Импорт заменит текущий прогресс и настройки. Продолжить?</string>
+    <string name="settings_backup_export_done">Резервная копия сохранена.</string>
+    <string name="settings_backup_export_failed">Не удалось сохранить резервную копию.</string>
+    <string name="settings_backup_import_done">Резервная копия восстановлена.</string>
+    <string name="settings_backup_import_failed">Не удалось восстановить резервную копию.</string>
     <string name="statistics_daily_title">Подтягивания по дням</string>
     <string name="statistics_daily_empty">Пока нет данных по дням. Выполните тренировку, чтобы увидеть график.</string>
     <string name="statistics_chart_legend">По оси X — дни (слева направо), по высоте — количество подтягиваний. Точные цифры и даты смотрите в списке ниже.</string>
