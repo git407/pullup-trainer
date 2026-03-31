@@ -41,6 +41,18 @@ android {
         buildConfig true
         viewBinding true
     }
+    buildToolsVersion '36.1.0'
+    ndkVersion '28.2.13676358'
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.each { output ->
+            def vName = android.defaultConfig.versionName ?: "dev"
+            def vCode = android.defaultConfig.versionCode ?: 0
+            output.outputFileName.set("pullup-trainer-${vName}-${vCode}.apk")
+        }
+    }
 }
 
 dependencies {
