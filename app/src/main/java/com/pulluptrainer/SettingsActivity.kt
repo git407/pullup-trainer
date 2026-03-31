@@ -318,7 +318,7 @@ class SettingsActivity : AppCompatActivity() {
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     importBackupLauncher.launch(arrayOf("application/json", "text/plain"))
                 }
-                .setNegativeButton(android.R.string.cancel, null)
+                .setNegativeButton(getString(R.string.common_cancel), null)
                 .show()
         }
         
@@ -359,7 +359,7 @@ class SettingsActivity : AppCompatActivity() {
                         android.widget.Toast.LENGTH_SHORT
                     ).show()
                 }
-                .setNegativeButton(android.R.string.cancel, null)
+                .setNegativeButton(getString(R.string.common_cancel), null)
                 .show()
         }
     }

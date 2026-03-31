@@ -10,7 +10,7 @@ android {
         applicationId "com.pulluptrainer"
         minSdk = 26
         targetSdk = compileSdk
-        versionCode = 4
+        versionCode = 6
         versionName = "1.0.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

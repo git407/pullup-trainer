@@ -184,7 +184,7 @@
         <TextView
             android:id="@+id/startButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:text="@string/workout_start_button"
             android:textSize="18sp"
@@ -198,7 +198,7 @@
         <TextView
             android:id="@+id/completeButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:text="@string/workout_complete_button"
             android:textSize="18sp"
@@ -213,7 +213,7 @@
         <TextView
             android:id="@+id/skipButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:text="@string/workout_skip_button"
             android:textSize="18sp"
@@ -228,7 +228,7 @@
         <TextView
             android:id="@+id/cancelButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="64dp"
             android:layout_weight="1"
             android:text="@string/workout_cancel_button"
             android:textSize="18sp"

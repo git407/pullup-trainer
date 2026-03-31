@@ -271,20 +271,39 @@
             android:paddingTop="16dp"
             android:paddingBottom="16dp">
 
-            <Button
-                android:id="@+id/exportBackupButton"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_export_backup"
-                android:textSize="16sp" />
+                android:text="@string/settings_backup_actions_title"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginBottom="10dp" />
 
-            <Button
-                android:id="@+id/importBackupButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/settings_import_backup"
-                android:textSize="16sp" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/exportBackupButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:textAllCaps="false"
+                    android:text="@string/settings_export_backup"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/importBackupButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:textAllCaps="false"
+                    android:text="@string/settings_import_backup"
+                    android:textSize="16sp" />
+            </LinearLayout>
         </LinearLayout>
 
         </LinearLayout>

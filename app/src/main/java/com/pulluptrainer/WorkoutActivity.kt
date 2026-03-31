@@ -165,7 +165,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         }
         
         cancelButton.setOnClickListener {
-            cancelWorkout()
+            showCancelWorkoutConfirmation()
         }
         
         skipButton.setOnClickListener {
@@ -517,7 +517,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
                 countDownTimer?.cancel()
                 moveToNextSet()
             }
-            .setNegativeButton(android.R.string.cancel, null)
+            .setNegativeButton(getString(R.string.common_cancel), null)
             .show()
     }
     
@@ -553,6 +553,17 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         }
     }
     
+    private fun showCancelWorkoutConfirmation() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.workout_cancel_title))
+            .setMessage(getString(R.string.workout_cancel_message))
+            .setPositiveButton(getString(R.string.workout_cancel_confirm)) { _, _ ->
+                cancelWorkout()
+            }
+            .setNegativeButton(getString(R.string.common_cancel), null)
+            .show()
+    }
+
     private fun cancelWorkout() {
         countDownTimer?.cancel()
         stopSensorTracking()
@@ -889,13 +900,13 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     }
     
     override fun onSupportNavigateUp(): Boolean {
-        cancelWorkout()
+        showCancelWorkoutConfirmation()
         return true
     }
     
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        cancelWorkout()
+        showCancelWorkoutConfirmation()
     }
 }
 
